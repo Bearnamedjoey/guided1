@@ -1,0 +1,32 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+rm(list = ls())
+```
+
+```{r}
+link='https://github.com/Bearnamedjoey/guided1/raw/main/Country%20Comparison.csv'
+```
+
+
+```{r}
+myFile=url(link)
+```
+
+```{r}
+fromPy=read_csv(file = myFile)
+```
+```{r}
+row.names(fromPy)=NULL
+```
+
+```{r}
+str(fromPy)
+```
+```{r}
+dataToCluster=fromPy[,-c(1,2:7,13)]
+```
+
