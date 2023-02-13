@@ -27,6 +27,59 @@ row.names(fromPy)=NULL
 str(fromPy)
 ```
 ```{r}
-dataToCluster=fromPy[,-c(1,2:7,13)]
+dataToCluster=fromPy[,-c(1)]
+```
+
+```{r}
+row.names(dataToCluster)=fromPy$Country
+```
+```{r}
+set.seed(999)
+```
+
+```{r}
+library(cluster)
+distanceMatrix=daisy(x=dataToCluster, metric = "gower")
+```
+
+```{r}
+projectedData = cmdscale(distanceMatrix, k=2)
+```
+
+```{r}
+fromPy$dim1 = projectedData[,1]
+fromPy$dim2 = projectedData[,2]
+```
+
+```{r}
+library(ggplot2)
+base= ggplot(data=fromPy,
+             aes(x=dim1, y=dim2,
+                 label=Country)) 
+base + geom_text(size=2)
+```
+```{r}
+hc = hclust(distanceMatrix)
+```
+
+```{r}
+plot(hc,hang = -1,cex=0.5)
+```
+```{r}
+library(factoextra)
+```
+```{r}
+```
+
+
+
+```{r}
+fviz_nbclust(dataToCluster, 
+             hcut,
+             diss=distanceMatrix,
+             method = "gap_stat",
+             k.max = 10,
+             verbose = F,
+             hc_func = "agnes")
 ```
 
