@@ -84,7 +84,103 @@ fviz_nbclust(dataToCluster,
              hc_func = "agnes")
 ```
 ```{r}
+res.agnes= hcut(distanceMatrix, 
+                k = NumberOfClusterDesired,
+                isdiss=TRUE,
+                hc_func='agnes',
+                hc_method = "ward.D2")
+```
+
+```{r}
+fromPy$agn=as.factor(res.agnes$cluster)
+```
+
+```{r}
+aggregate(data=fromPy,
+          Airports~agn,
+          FUN=mean)
+```
+
+```{r}
+library(dplyr)
+fromPy$agn=dplyr::recode_factor(fromPy$agn, 
+                  `4`='1',`1`='4',`2`='3',`3`='2',.ordered = T)
+```
+
+```{r}
+fviz_silhouette(res.agnes)
+```
+```{r}
+agnEval=data.frame(res.agnes$silinfo$widths)
+agnPoor=rownames(agnEval[agnEval$sil_width<0,])
+```
+
+
+
+```{r}
+library("qpcR") 
+```
+
+
+```{r}
+bad_Clus=as.data.frame(qpcR:::cbind.na(sort(agnPoor),))
+names(bad_Clus)=c("agn")
+bad_Clus
+```
+
+```{r}
+library(ggplot2)
+```
+
+
+```{r}
+base= ggplot(data=fromPy,
+             aes(x=dim1, y=dim2,
+                 label=Country)) 
+agnPlot=base + labs(title = "AGNES") + geom_point(size=2,
+                                              aes(color=agn),
+                                              show.legend = T) 
+```
+
+```{r}
+library(ggpubr)
+
+ggarrange(agnPlot,ncol = 1,common.legend = T)
+```
+
+```{r}
+LABELagn=ifelse(fromPy$Country%in%agnPoor,fromPy$Country,"")
+```
+
+```{r}
+library(ggrepel)
+```
+
+
+```{r}
+agnPlot= agnPlot + 
+         geom_text_repel(aes(label=LABELagn),
+                         max.overlaps = 50,
+                         min.segment.length = unit(0, 'lines'))
+```
+
+```{r}
+ggarrange(agnPlot, 
+          ncol = 1,
+          common.legend = T)
 
 ```
 
+```{r}
+library(factoextra)
+```
+
+
+```{r}
+fviz_dend(res.agnes,
+          k=NumberOfClusterDesired, 
+          cex = 0.45, 
+          horiz = T,
+          main = "AGNES approach")
+```
 
