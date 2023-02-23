@@ -7,6 +7,8 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
 
+***//Cluster Analysis//***
+
 ```{r}
 rm(list = ls()) 
 ```
@@ -123,7 +125,7 @@ library("qpcR")
 
 
 ```{r}
-bad_Clus=as.data.frame(qpcR:::cbind.na(sort(agnPoor),))
+bad_Clus=as.data.frame(qpcR:::cbind.na(sort(agnPoor)))
 names(bad_Clus)=c("agn")
 bad_Clus
 ```
@@ -182,5 +184,140 @@ fviz_dend(res.agnes,
           cex = 0.45, 
           horiz = T,
           main = "AGNES approach")
+```
+```{r}
+table(fromPy$Gini.Index,fromPy$agn)
+```
+
+***//Factor Analysis//***
+
+```{r}
+dataForFA=dataToCluster
+```
+
+```{r}
+library(polycor)
+corMatrix=polycor::hetcor(dataForFA)$correlations
+```
+
+```{r}
+library(ggcorrplot)
+ggcorrplot(corMatrix,
+           type = "lower") + 
+          theme(axis.text.x  = element_text(size = 5),
+                axis.text.y  = element_text(size = 5))
+```
+
+```{r}
+library(psych)
+psych::KMO(corMatrix) 
+```
+
+```{r}
+cortest.bartlett(corMatrix,n=nrow(dataForFA))$p.value>0.05
+```
+
+```{r}
+library(matrixcalc)
+
+is.singular.matrix(corMatrix)
+```
+
+```{r}
+fa.parallel(dataForFA, fa = 'fa',correct = T,plot = F)
+```
+
+```{r}
+library(GPArotation)
+resfa <- fa(dataForFA,
+            nfactors = 2,
+            cor = 'mixed',
+            rotate = "varimax",
+            fm="minres")
+```
+
+```{r}
+print(resfa$loadings)
+```
+
+```{r}
+print(resfa$loadings,cutoff = 0.5)
+```
+
+```{r}
+fa.diagram(resfa,main = "EFA results")
+```
+```{r}
+ps=c("Airoirts","Percent.of.Obesity")
+notPs=setdiff(names(dataForFA),ps)
+dataForFA2=dataForFA[,notPs]
+```
+
+```{r}
+library(polycor)
+corMatrix2=polycor::hetcor(dataForFA2)$correlations
+```
+
+```{r}
+library(psych)
+psych::KMO(corMatrix2) 
+```
+
+```{r}
+cortest.bartlett(corMatrix2,n=nrow(dataForFA2))$p.value>0.05
+```
+
+```{r}
+library(matrixcalc)
+is.singular.matrix(corMatrix2)
+```
+
+```{r}
+fa.parallel(dataForFA2, fa = 'fa',correct = T,plot = F)
+```
+
+```{r}
+library(GPArotation)
+resfa <- fa(dataForFA2,
+            nfactors = 3,
+            cor = 'mixed',
+            rotate = "varimax",
+            fm="minres")
+```
+
+```{r}
+fa.diagram(resfa,main = "EFA results (2)")
+```
+```{r}
+library(GPArotation)
+resfa <- fa(dataForFA2,
+            nfactors = 2,
+            cor = 'mixed',
+            rotate = "varimax",
+            fm="minres")
+
+fa.diagram(resfa,main = "EFA results (3)")
+```
+```{r}
+sort(resfa$communality)
+```
+
+```{r}
+sort(resfa$complexity)
+```
+
+```{r}
+summary(resfa$scores)
+```
+
+```{r}
+library(BBmisc)
+efa_scores=normalize(resfa$scores, 
+                       method = "range", 
+                       margin=2, # by column
+                       range = c(0, 10))
+
+fromPy$Fragile_efa=efa_scores[,1]
+fromPy$Demo_efa=efa_scores[,2]
 ```
 
