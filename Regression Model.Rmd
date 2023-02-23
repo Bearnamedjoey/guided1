@@ -1,0 +1,63 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+rm(list = ls())
+```
+
+```{r}
+link='https://github.com/Bearnamedjoey/guided1/raw/main/fromPyPlus.RDS'
+```
+
+```{r}
+myFile=url(link)
+```
+
+
+```{r}
+multidata=readRDS(file = myFile)
+```
+
+```{r}
+row.names(multidata)=NULL
+```
+
+```{r}
+str(multidata,width = 70,strict.width='cut')
+```
+
+#hypothesis1: The overall health of a country is related to alcohol consumption, tobacco use, obesity, and Gini Index.
+
+
+```{r}
+hypo1=formula(Health_efa~ liters.of.pure.alcohol+Percent.of.Tobacco.Use+liters.of.pure.alcohol+Gini.Index)
+
+```
+
+```{r}
+gauss1=glm(hypo1,
+           data = multidata,
+           family = 'gaussian')
+```
+
+
+
+```{r}
+summary(gauss1)
+
+```
+
+```{r}
+library(rsq)
+rsq(gauss1,adj=T)
+
+```
+
+
+
+
+
