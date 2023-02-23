@@ -317,7 +317,11 @@ efa_scores=normalize(resfa$scores,
                        margin=2, # by column
                        range = c(0, 10))
 
-fromPy$Fragile_efa=efa_scores[,1]
-fromPy$Demo_efa=efa_scores[,2]
+fromPy$Health_efa=efa_scores[,1]
+fromPy$Econ_efa=efa_scores[,2]
+```
+
+```{r}
+saveRDS(fromPy,file = 'fromPyPlus.RDS')
 ```
 
