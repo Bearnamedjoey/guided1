@@ -56,8 +56,8 @@ library(rsq)
 rsq(gauss1,adj=T)
 
 ```
+# Question C: The regression results indicate that health, in general, is positively associated with pure alcohol consumption and tobacco usage percentage, but adversely associated with the Gini index. Specifically, for each additional liter of pure alcohol consumed per capita, the estimated increase in overall health is 0.3859 units, with all other variables held constant. Similarly, with each additional percentage point of tobacco usage, the estimated increase in overall health is 0.0711 units, with all other variables held constant. In contrast, for each additional unit of the Gini index, the expected decrease in overall health is 0.0506 units, with all other variables held constant.
 
-
-
+# It is important to note, however, that the Gini index coefficient is not statistically significant, meaning that we cannot be certain that this relation is not due to coincidence. Regression analysis cannot prove causality, and other factors not included in the model may potentially affect overall health.
 
 
